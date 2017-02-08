@@ -1,12 +1,15 @@
 Running tests with CoverageTestRunner
 =====================================
 
-::
+Download missing dependencies (should be already in repository)::
+
+    mkdir libs
+    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/coverage-test-runner/snapshot/coverage-test-runner-coverage-test-runner-1.11.tar.gz -O libs/CoverageTestRunner-1.11.tar.gz
+
+Install all needed tools and Qvarn into a virtualenv::
 
     test -f qvarn/requirements.txt
     mkvirtualenv -p /usr/bin/python2.7 qvarn
-    mkdir libs
-    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/coverage-test-runner/snapshot/coverage-test-runner-coverage-test-runner-1.11.tar.gz -O libs/CoverageTestRunner-1.11.tar.gz
     cd qvarn
     pip install coverage
     pip install -r requirements.txt --find-links ../libs
@@ -38,12 +41,15 @@ Then you can run tests:
 Running integration tests
 =========================
 
-First install the tools::
+First download the tools (these should be already downloaded and added to the
+repository)::
 
     cd libs
     wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/ttystatus/snapshot/ttystatus-0.32.tar.gz
     wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/cliapp/snapshot/cliapp-1.20160724.tar.gz
     wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/cmdtest/snapshot/cmdtest-0.27.tar.gz
+
+Then install the tools::
 
     cd ..
     pip install markdown pyyaml
@@ -67,7 +73,7 @@ Add this section to ``~/.config/qvarn/createtoken.conf``::
     client_id = 
     client_secret = 
 
-Generate self-signed SSL certificate::
+Generate self-signed SSL certificate (this should be already generated)::
 
     openssl genrsa -out ssl.key 2048
     openssl req -new -key ssl.key -out ssl.csr
@@ -84,7 +90,7 @@ Some tests do not pass with https, as a workaround, you can run tests with
 http::
 
     cd qvarn
-    uwsgi --https-socket 127.0.0.1:9090,../ssl.crt,../ssl.key --wsgi-file ../server.py --pyargv '--config ../qvarn.conf' --master
+    uwsgi --http-socket 127.0.0.1:9090 --wsgi-file ../server.py --pyargv '--config ../qvarn.conf' --master
 
 But for this, you need to fix two files in Qvarn sources, where https is
 hardcoded::
