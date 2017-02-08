@@ -57,13 +57,21 @@ Then install the tools::
     pip install ttystatus --find-links libs
     pip install cliapp --find-links libs
 
-Then set up database (see ``qvarn.conf``)::
 
-    createdb qvarn
+Create database user and database::
+
+    > sudo -u postgres psql                                                      
+    postgres=# CREATE USER qvarn WITH PASSWORD 'secret';
+    postgres=# CREATE DATABASE qvarn;
+    postgres=# GRANT ALL PRIVILEGES ON DATABASE qvarn TO qvarn;
+
+
+Then initialize Qvarn database (see ``qvarn.conf``)::
+
     cd qvarn
     ../prepare-db.py
 
-Add this section to ``~/.config/qvarn/createtoken.conf``::
+Add these two sections to ``~/.config/qvarn/createtoken.conf``::
 
     [http://127.0.0.1:9090]
     client_id = 

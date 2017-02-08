@@ -42,6 +42,8 @@ for resource_type in os.listdir('src'):
     path = os.path.join('src', resource_type)
     if os.path.isfile(path) and os.access(path, os.X_OK):
         resource_types[resource_type] = imp.load_source(resource_type, path)
+        if os.path.exists(path + 'c'):
+            os.remove(path + 'c')
 
 
 def get_post_data(environ):
