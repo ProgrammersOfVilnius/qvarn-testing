@@ -92,13 +92,13 @@ See: http://uwsgi-docs.readthedocs.io/en/latest/HTTPS.html
 Run Qvarn instance::
 
     cd qvarn
-    uwsgi --https-socket 127.0.0.1:9090,../ssl.crt,../ssl.key --wsgi-file ../server.py --pyargv '--config ../qvarn.conf' --master
+    uwsgi --https-socket 127.0.0.1:9090,../ssl.crt,../ssl.key --wsgi-file ../server.py --pyargv '--config ../qvarn.conf' --master --py-autoreload 1
 
 Some tests do not pass with https, as a workaround, you can run tests with
 http::
 
     cd qvarn
-    uwsgi --http-socket 127.0.0.1:9090 --wsgi-file ../server.py --pyargv '--config ../qvarn.conf' --master
+    uwsgi --http-socket 127.0.0.1:9090 --wsgi-file ../server.py --pyargv '--config ../qvarn.conf' --master --py-autoreload 1
 
 But for this, you need to fix two files in Qvarn sources, where https is
 hardcoded::
@@ -109,12 +109,11 @@ hardcoded::
 
 Finally you run tests using this command::
 
-    cd docs/qvarn-api-doc
-    ./test-api https://127.0.0.1:9090 --stop-on-first-fail
+    ../apitests.py path/to/virtualenv https://127.0.0.1:9090 --stop-on-first-fail
 
-If something failes, you can run tests like this::
+If something fails, you can run tests like this::
 
-    ./test-api https://127.0.0.1:9090 -v --stop-on-first-fail -r 'manage a person' --tempdir /tmp/qvarn-test-api --snapshot
+    ../apitests.py path/to/virtualenv https://127.0.0.1:9090 -v --stop-on-first-fail -r 'manage a person' --tempdir /tmp/qvarn-test-api --snapshot
 
 This will output more information about test run and also leaves all temporary
 files in specified ``--tempdir``.
