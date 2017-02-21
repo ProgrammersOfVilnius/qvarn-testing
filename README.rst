@@ -117,3 +117,13 @@ If something fails, you can run tests like this::
 
 This will output more information about test run and also leaves all temporary
 files in specified ``--tempdir``.
+
+
+How to read and write yarn test files
+=====================================
+
+Here are some usefull resources:
+
+- http://blog.liw.fi/posts/yarn/
+
+- http://liw.fi/cmdtest/
