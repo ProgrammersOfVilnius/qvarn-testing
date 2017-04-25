@@ -8,7 +8,14 @@ import json
 import argparse
 import sqlparse
 import collections
-import ConfigParser
+
+try:
+    # Python 2
+    from ConfigParser import RawConfigParser
+    PY2 = True
+except ImportError:  # pragma: no cover
+    from configparser import RawConfigParser
+    PY2 = False
 
 from glob import glob
 from operator import itemgetter
@@ -76,7 +83,8 @@ def text_representer(dumper, data):
 
 
 yaml.add_representer(str, text_representer)
-yaml.add_representer(unicode, text_representer)
+if PY2:
+    yaml.add_representer(unicode, text_representer)
 
 
 def dumps(msg):
@@ -126,7 +134,7 @@ def main():
     parser.add_argument('--since', type=str, default=None)
     args = parser.parse_args()
 
-    config = ConfigParser.RawConfigParser()
+    config = RawConfigParser()
     config.read(args.config)
     log = config.get('main', 'log')
 

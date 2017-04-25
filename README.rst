@@ -4,20 +4,29 @@ Running tests with CoverageTestRunner
 Download missing dependencies (should be already in repository)::
 
     mkdir libs
-    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/coverage-test-runner/snapshot/coverage-test-runner-coverage-test-runner-1.11.tar.gz -O libs/CoverageTestRunner-1.11.tar.gz
+    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/coverage-test-runner/snapshot/coverage-test-runner-coverage-test-runner-1.11.tar.gz -O libs/CoverageTestRunner-1.17.tar.gz
 
 Install all needed tools and Qvarn into a virtualenv::
 
-    test -f qvarn/requirements.txt
-    mkvirtualenv -p /usr/bin/python2.7 qvarn
-    pip install -r requirements.txt
     cd qvarn
-    pip install coverage
+    mkvirtualenv -p /usr/bin/python2.7 qvarn
+    pip install -r ../requirements.txt
     pip install -r requirements.txt --find-links ../libs
-    pip install psycopg2
     pip install uwsgidecorators
     pip install -e .
     ./check
+
+
+For Python 3::
+
+    cd qvarn
+    mkvirtualenv -p /usr/bin/python3.4 qvarn
+    pip install -r ../requirements-py3.txt
+    pip install -r requirements-py3.txt --find-links ../libs
+    pip install uwsgidecorators
+    pip install -e .
+    ./check
+
 
 
 Running tests with py.test
@@ -46,14 +55,14 @@ First download the tools (these should be already downloaded and added to the
 repository)::
 
     cd libs
+    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/cmdtest/snapshot/cmdtest-0.27.tar.gz
     wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/ttystatus/snapshot/ttystatus-0.32.tar.gz
     wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/cliapp/snapshot/cliapp-1.20160724.tar.gz
-    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/cmdtest/snapshot/cmdtest-0.27.tar.gz
 
 Then install the tools::
 
     cd ..
-    pip install markdown pyyaml
+    pip install markdown
     pip install cmdtest --find-links libs
     pip install ttystatus --find-links libs
     pip install cliapp --find-links libs

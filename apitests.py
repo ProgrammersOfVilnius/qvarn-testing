@@ -8,7 +8,12 @@ import argparse
 import collections
 import datetime
 import tempfile
-import ConfigParser
+
+try:
+    # Python 2
+    from ConfigParser import RawConfigParser
+except ImportError:  # pragma: no cover
+    from configparser import RawConfigParser
 
 from subprocess import Popen, CalledProcessError
 
@@ -46,7 +51,7 @@ def main():
         print()
         return run(['yarn', '--help']).returncode
 
-    config = ConfigParser.RawConfigParser()
+    config = RawConfigParser()
     config.read(args.config)
     log = config.get('main', 'log')
 

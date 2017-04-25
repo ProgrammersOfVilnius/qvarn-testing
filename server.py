@@ -5,7 +5,11 @@ import imp
 import json
 import time
 import jwt
-import urlparse
+
+try:
+    from urlparse import parse_qsl
+except ImportError:
+    from urllib.parse import parse_qsl  # noqa
 
 
 private_test_key = '''-----BEGIN RSA PRIVATE KEY-----
@@ -52,7 +56,7 @@ def get_post_data(environ):
     except (ValueError):
         content_length = 0
     body = environ['wsgi.input'].read(content_length)
-    return dict(urlparse.parse_qsl(body))
+    return dict(parse_qsl(body.decode('utf-8')))
 
 
 def get_jwt_token(scope):
@@ -81,7 +85,7 @@ def auth_token(environ, start_response):
         'scope': post['scope'],
         'access_token': get_jwt_token(post['scope']),
         'expires_in': 300,
-    })
+    }).encode('utf-8')
 
 
 def application(environ, start_response):
