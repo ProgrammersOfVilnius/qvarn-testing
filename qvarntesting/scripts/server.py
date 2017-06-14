@@ -35,3 +35,7 @@ def main():
         ))
         m.loop()
     return m.returncode
+
+
+if __name__ == "__main__":
+    main()

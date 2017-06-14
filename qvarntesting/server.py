@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
-import os
-import imp
+import sys
 import json
 import time
 import jwt
+import argparse
 
 try:
     from urlparse import parse_qsl
 except ImportError:
     from urllib.parse import parse_qsl  # noqa
+
+import qvarn
 
 
 private_test_key = '''-----BEGIN RSA PRIVATE KEY-----
@@ -39,15 +41,6 @@ ckk/JDxfAoGAHUjRwU36XhH4wKrGd71avRc1nx6OGVuwzyiiZEEaaLPrXg8gJBaR
 ec1V6k23+H/CRrzMFGZCIbMNQaxhPxfCaBINHygcZQ4jsIepFxmcDV++Fi/jMHMf
 cImjZ9dxwWFeouQhOHalSyCiWWYgHSWw3r4jj/L/h2VjchzMOvJQt6A=
 -----END RSA PRIVATE KEY-----'''
-
-
-resource_types = {}
-for resource_type in os.listdir('src'):
-    path = os.path.join('src', resource_type)
-    if os.path.isfile(path) and os.access(path, os.X_OK):
-        resource_types[resource_type] = imp.load_source(resource_type, path)
-        if os.path.exists(path + 'c'):
-            os.remove(path + 'c')
 
 
 def get_post_data(environ):
@@ -88,16 +81,45 @@ def auth_token(environ, start_response):
     }).encode('utf-8')
 
 
+def version():
+    return {
+        'api': {
+            'version': qvarn.__version__,
+        },
+        'implementation': {
+            'name': 'Qvarn',
+            'version': qvarn.__version__,
+        },
+    }
+
+
+def setup_version_resource(app):
+    vs = qvarn.VersionedStorage()
+    vs.set_resource_type('version')
+    app.add_versioned_storage(vs)
+
+    resource = qvarn.SimpleResource()
+    resource.set_path(u'/version', version)
+    return resource
+
+
 def application(environ, start_response):
     path = environ.get('PATH_INFO', '')
-    parts = path.split('/')
 
-    if len(parts) > 1 and parts[1] in resource_types:
-        return resource_types[parts[1]].application(environ, start_response)
-
-    elif path == '/auth/token':
+    if path == '/auth/token':
         return auth_token(environ, start_response)
-
     else:
-        start_response('200 OK', [('Content-type', 'text/plain')])
-        return ["%s: %s\n" % (key, value) for key, value in environ.iteritems()]
+        return qvarnapp(environ, start_response)
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('specdir', help="directory containging resource type definitions")
+args, argv = parser.parse_known_args()
+argparse._sys.argv = [sys.argv[0]] + argv
+
+app = qvarn.BackendApplication()
+
+resource = setup_version_resource(app)
+app.add_routes([resource])
+
+qvarnapp = app.prepare_for_uwsgi(args.specdir)

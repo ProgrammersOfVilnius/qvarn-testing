@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 
-import os
-from subprocess import check_call
+import sys
+import argparse
+
+import qvarn
 
 
-for resource_type in os.listdir('src'):
-    path = os.path.join('src', resource_type)
-    if os.path.isfile(path) and os.access(path, os.X_OK):
-        print('prapare-db: %r' % resource_type)
-        check_call([path, '--config', '../qvarn.conf', '--prepare-storage'])
+specdir = '/etc/qvarn'
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('config', help="Qvarn config file")
+    parser.add_argument('specdir', help="directory containging resource type definitions")
+    args = parser.parse_args()
+
+    sys.argv = ['--config', args.config, '--prepare-storage']
+
+    app = qvarn.BackendApplication()
+    app.prepare_for_uwsgi(args.specdir)
+
+
+if __name__ == "__main__":
+    main()
