@@ -2,3 +2,4 @@
 /tags
 /.cache
 *.egg-info/
+*.pyc
