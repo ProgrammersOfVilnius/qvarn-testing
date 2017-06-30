@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from __future__ import absolute_import
 
 import time
 
@@ -37,12 +38,9 @@ cImjZ9dxwWFeouQhOHalSyCiWWYgHSWw3r4jj/L/h2VjchzMOvJQt6A=
 def get_jwt_token(params=None):
     now = time.time()
     payload = {
-        'oxValidationURI': 'https://gluu.example.com/oxauth/opiframe',
+        'oxValidationURI': 'http://127.0.0.1:9000/oxauth/opiframe',
         'oxOpenIDConnectVersion': 'openidconnect-1.0',
-        'c_hash': 'dSxmNqq0uc7rT-c0qgr276hH-yUaW9HMaKY-2xyBM90',
-        'aud': '@!1E2D.4C48.2272.F616!0001!CC3B.680A!0008!C2A9.C9A2',
-        'sub': 'useridhash',
-        'iss': 'https://gluu.example.com',
+        'iss': 'http://127.0.0.1:9000',
         'exp': now + 3600,
         'iat': now - 120,
         'alg': 'RS512',

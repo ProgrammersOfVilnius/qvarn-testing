@@ -12,6 +12,7 @@ from webtest import TestApp
 
 from qvarntesting.utils import env
 from qvarntesting import server
+from qvarntesting import compat
 
 
 def _app(environ, start_response):
@@ -19,7 +20,7 @@ def _app(environ, start_response):
     handler = server.find_handler(request)
 
     if handler:
-        return handler(request, start_response)
+        return handler(request, compat.start_response(start_response))
     else:
         start_response('404 Not Found', [('Content-type', 'application/json')])
         return []
@@ -40,6 +41,8 @@ def db(mocker):
         yield conn
 
     mocker.patch('qvarntesting.services.database', database)
+
+    return conn
 
 
 @pytest.fixture()

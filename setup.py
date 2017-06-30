@@ -16,6 +16,7 @@ setup(
         'honcho',    # process management
         'dataset',   # for persisting gluu users
         'webob',
+        'Jinja2',
 
 
         # Qvarn dependencies

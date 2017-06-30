@@ -1,0 +1,17 @@
+ <!DOCTYPE html>
+<html>
+<head>
+<title>Gluu login</title>
+</head>
+<body>
+
+    <h2>Select user</h2>
+
+    <ul id="user-list">
+        {% for user in users %}
+        <li><a href="{{ user.redirect_url }}">{{ user.displayName }}</a></li>
+        {% endfor %}
+    <ul>
+
+</body>
+</html> 

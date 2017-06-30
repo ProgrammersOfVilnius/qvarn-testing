@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from __future__ import absolute_import
 
 import qvarn
 
@@ -29,10 +30,12 @@ def setup_version_resource(app):
 
 
 def auth_token(request, start_response):
-    start_response(b'200 OK', [('Content-type', 'application/json')])
+    start_response('200 OK', [('Content-type', 'application/json')])
     return json_response({
         'scope': request.POST['scope'],
         'access_token': get_jwt_token({
+            'aud': 'client-id',
+            'sub': 'user-id',
             'scope': request.POST['scope'],
         }),
         'expires_in': 300,

@@ -1,1 +1,2 @@
 pytest-mock==1.6.0
+lxml==3.8.0

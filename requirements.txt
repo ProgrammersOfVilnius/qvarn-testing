@@ -6,3 +6,4 @@ PyYAML==3.12
 dataset==0.8.0
 qvarn==0.81
 WebOb==1.7.2
+Jinja2==2.9.6

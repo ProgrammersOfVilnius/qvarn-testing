@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from __future__ import absolute_import
 
 from qvarntesting.views import gluu
 from qvarntesting.views import qvarn

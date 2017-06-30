@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from __future__ import absolute_import
 
 import sys
 import argparse
@@ -7,6 +8,7 @@ import qvarn
 
 from webob import Request
 
+from qvarntesting import compat
 from qvarntesting import server
 from qvarntesting.views.qvarn import setup_version_resource
 
@@ -35,6 +37,6 @@ def application(environ, start_response):
     handler = server.find_handler(request)
 
     if handler:
-        return handler(request, start_response)
+        return handler(request, compat.start_response(start_response))
     else:
         return qvarn_app(environ, start_response)
