@@ -214,3 +214,14 @@ def test_get_user(app, db):
     userid = text_type(userid)
 
     resp = app.get('/identity/seam/resource/restv1/scim/v2/Users/%s' % userid)
+
+    assert resp.json == {
+        'addresses': [],
+        'customAttributes': [],
+        'displayName': u'Thomas Anderson',
+        'emails': [
+            {'primary': 'true', 'type': '', 'value': 'admin@example.com'},
+        ],
+        'entitlements': [],
+        'externalId': '',
+    }

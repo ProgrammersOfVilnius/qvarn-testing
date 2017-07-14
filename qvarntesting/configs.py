@@ -19,6 +19,7 @@ def template(configdir, filename, context):
 
 
 def create_config_files(basedir):
+    basedir = os.path.abspath(basedir)
     configdir = os.path.join(basedir, 'etc')
 
     if not os.path.exists(configdir):

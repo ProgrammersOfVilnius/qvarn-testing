@@ -30,8 +30,8 @@ def main():
     set_up_configs(args.basedir)
     set_up_gluu_db(args.basedir)
 
-    haproxy_cfg = os.path.join(args.basedir, 'etc', 'haproxy.cfg')
-    qvarn_conf = os.path.join(args.basedir, 'etc', 'qvarn.conf')
+    haproxy_cfg = os.path.abspath(os.path.join(args.basedir, 'etc', 'haproxy.cfg'))
+    qvarn_conf = os.path.abspath(os.path.join(args.basedir, 'etc', 'qvarn.conf'))
     gluu_db_uri = 'sqlite:///' + os.path.abspath(os.path.join(args.basedir, 'var', 'gluu.db'))
 
     logger.info('gluu db: %s', gluu_db_uri)
