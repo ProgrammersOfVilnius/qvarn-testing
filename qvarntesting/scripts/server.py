@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('specdir', help="directory containging resource type definitions")
-    parser.add_argument('appconfig', help="app configuration file")
+    parser.add_argument('-c', '--appconfig', default='', help="app configuration file")
     parser.add_argument('-d', '--basedir', default=DEFAULT_BASE_DIR, help="path to config files and etc.")
     args = parser.parse_args()
 

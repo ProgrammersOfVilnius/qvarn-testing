@@ -11,6 +11,7 @@ from webob import Request
 from qvarntesting import compat
 from qvarntesting import server
 from qvarntesting.views.qvarn import setup_version_resource
+from qvarntesting.qvarnlogs import StdoutSlogWriter, FileSlogWriter
 
 
 parser = argparse.ArgumentParser()
@@ -30,6 +31,8 @@ else:
     raise Exception("Unsupported Qvarn version.")
 
 qvarn_app = app.prepare_for_uwsgi(args.specdir)
+qvarn.log.add_log_writer(StdoutSlogWriter(), qvarn.FilterAllow())
+qvarn.log.add_log_writer(FileSlogWriter('/tmp/qvarn.log'), qvarn.FilterAllow())
 
 
 def application(environ, start_response):

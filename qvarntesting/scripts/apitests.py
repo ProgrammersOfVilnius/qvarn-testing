@@ -9,6 +9,7 @@ import argparse
 import collections
 import datetime
 import tempfile
+import logging
 
 try:
     # Python 2
@@ -18,6 +19,8 @@ except ImportError:  # pragma: no cover
 
 from subprocess import Popen, CalledProcessError
 
+
+logger = logging.getLogger(__name__)
 
 CompletedProcess = collections.namedtuple('CompletedProcess', ('args', 'returncode', 'stdout', 'stderr'))
 
@@ -75,11 +78,11 @@ def main():
 
     # Show log content if tests failed.
     if log and result.returncode != 0:
-        run(['python', '../readlogs.py', args.config, '--since', timestamp], check=True)
+        run(['qvtestlogs', args.config, '--since', timestamp], check=True)
 
     # Let user know snapshot directory.
     if args.snapshot:
-        print('Snapshot dir:', tmpdir)
+        logger.info('Snapshot dir: %s', tmpdir)
 
     return result.returncode
 

@@ -26,9 +26,12 @@ def auth_token(request, start_response):
         raise Exception("%s authentication method is not supported." % method)
 
     if request.POST['grant_type'] == 'authorization_code':
-        config = ConfigParser()
-        config.read(os.environ['APP_CONFIG'])
-        scopes = (config.get('qvarn', 'scope') or '').replace(',', ' ').split()
+        if os.environ.get('APP_CONFIG'):
+            config = ConfigParser()
+            config.read(os.environ['APP_CONFIG'])
+            scopes = (config.get('qvarn', 'scope') or '').replace(',', ' ').split()
+        else:
+            scopes = []
 
         user = services.get_gluu_user(int(request.POST['code']))
 

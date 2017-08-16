@@ -10,8 +10,8 @@ Install all needed tools and Qvarn into a virtualenv::
 
     cd qvarn
     mkvirtualenv -p /usr/bin/python2.7 qvarn
-    pip install -r ../requirements.txt
-    pip install -r requirements.txt --find-links ../libs
+    pip install -r ../qvarn-testing/requirements.txt
+    pip install -r requirements.txt --find-links ../qvarn-testing/libs
     pip install uwsgidecorators
     pip install -e .
     ./check
@@ -21,8 +21,8 @@ For Python 3::
 
     cd qvarn
     mkvirtualenv -p /usr/bin/python3.4 qvarn
-    pip install -r ../requirements-py3.txt
-    pip install -r requirements-py3.txt --find-links ../libs
+    pip install -r ../qvarn-testing/requirements-py3.txt
+    pip install -r requirements-py3.txt --find-links ../qvarn-testing/libs
     pip install uwsgidecorators
     pip install -e .
     ./check
@@ -45,7 +45,13 @@ Then you can run tests:
 
 ::
 
-    py.test -vvx --tb=native --cov-config=../pytest.ini --cov-report=term-missing --cov=qvarn qvarn
+    py.test 
+      -vvx
+      --tb=native
+      -c ../qvarn-testing/pytest.ini
+      --cov-config=../qvarn-testing/pytest.ini
+      --cov-report=term-missing
+      qvarn
 
 
 Running integration tests
@@ -79,7 +85,7 @@ Create database user and database::
 Then initialize Qvarn database (see ``qvarn.conf``)::
 
     cd qvarn
-    ../initdb.py
+    qvtestinitdb resource_type
 
 Add these two sections to ``~/.config/qvarn/createtoken.conf``::
 
@@ -105,16 +111,15 @@ See: http://uwsgi-docs.readthedocs.io/en/latest/HTTPS.html
 Run Qvarn instance and Haproxy::
 
     cd qvarn
-    uwsgi --http-socket 127.0.0.1:9000 --wsgi-file ../server.py --pyargv '--config ../qvarn.conf' --master --py-autoreload 1
-    haproxy -f haproxy.cfg -C .. -db
+    qvtestserver ./resource_type
 
 Finally you can run tests using this command::
 
-    ../apitests.py ../qvarn.conf --stop-on-first-fail
+    qvtestapi /tmp/qvtest/etc/qvarn.conf --stop-on-first-fail
 
 If something fails, you can run tests like this::
 
-    ../apitests.py ../qvarn.conf -v --stop-on-first-fail -r 'manage a person' --snapshot
+    qvtestapi /tmp/qvtest/etc/qvarn.conf -v --stop-on-first-fail -r 'manage a person' --snapshot
 
 This will output more information about test run and also leaves all temporary
 test files in a snapshot directory.
@@ -123,7 +128,7 @@ After running tests one time, in order to run tests again, first you need to
 clean database, because tests leaves test data in database and will fail if you
 try to run them again. To clean database, run this command::
 
-    dropdb qvarn && createdb qvarn && ../initdb.py
+    dropdb qvarn && createdb qvarn && qvtestinitdb resource_type
 
 Do not forget to turn off uwsgi, to unlock database resource for dropping.
 
@@ -131,9 +136,9 @@ Do not forget to turn off uwsgi, to unlock database resource for dropping.
 Debugging integration tests
 ---------------------------
 
-When running integrations tests using ``../apitests.py`` on error you will get
-last error with whole context. If you want to print something there, you need
-to print it this way::
+When running qvarn with ``qvtestserver`` all loggs will be writtne to stdout
+and to ``/tmp/qvarn.log``. If you want to print something there, you need to
+print it this way::
 
     qvarn.log.log('debug', msg_text='Your message', key1=v1, key2=v2)
 
