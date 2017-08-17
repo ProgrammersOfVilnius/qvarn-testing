@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, print_function
 from __future__ import absolute_import
 
+import sys
 import yaml
 import sqlparse
 import codecs
@@ -75,6 +76,7 @@ class StdoutSlogWriter(SlogWriter):
 
     def write(self, log_obj):
         print(format_log_line(log_obj))
+        sys.stdout.flush()
 
     def close(self):
         pass
