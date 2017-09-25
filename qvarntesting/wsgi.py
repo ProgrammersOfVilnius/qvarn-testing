@@ -31,8 +31,11 @@ else:
     raise Exception("Unsupported Qvarn version.")
 
 qvarn_app = app.prepare_for_uwsgi(args.specdir)
-qvarn.log.add_log_writer(StdoutSlogWriter(), qvarn.FilterAllow())
-qvarn.log.add_log_writer(FileSlogWriter('/tmp/qvarn.log'), qvarn.FilterAllow())
+if qvarn.__version_info__ > (0, 81):
+    qvarn.log.add_log_writer(StdoutSlogWriter(), qvarn.FilterAllow())
+    qvarn.log.add_log_writer(FileSlogWriter('/tmp/qvarn.log'), qvarn.FilterAllow())
+else:
+    qvarn.log.set_log_writer(StdoutSlogWriter())
 
 
 def application(environ, start_response):
