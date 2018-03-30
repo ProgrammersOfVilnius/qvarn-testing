@@ -3,3 +3,7 @@
 /.cache
 *.egg-info/
 *.pyc
+ssl.crt
+ssl.csr
+ssl.key
+ssl.pem

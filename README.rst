@@ -1,103 +1,85 @@
 Running tests with CoverageTestRunner
 =====================================
 
-Download missing dependencies (should be already in repository)::
+Get the version of Qvarn you want to test into a sibling directory named
+``qvarn``, e.g. ::
 
-    mkdir libs
-    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/coverage-test-runner/snapshot/coverage-test-runner-coverage-test-runner-1.11.tar.gz -O libs/CoverageTestRunner-1.17.tar.gz
+    git clone git://git.qvarnlabs.net/qvarn
 
-Install all needed tools and Qvarn into a virtualenv::
+Install all needed tools and Qvarn itself into a virtualenv::
 
     cd qvarn
     mkvirtualenv -p /usr/bin/python2.7 qvarn
     pip install -r ../qvarn-testing/requirements.txt
     pip install -r requirements.txt --find-links ../qvarn-testing/libs
-    pip install uwsgidecorators
     pip install -e .
     ./check
 
 
-For Python 3::
+For Python 3 (for which you need a Python 3 enabled branch of Qvarn from
+https://github.com/vaultit/qvarn)::
 
     cd qvarn
-    mkvirtualenv -p /usr/bin/python3.4 qvarn
-    pip install -r ../qvarn-testing/requirements-py3.txt
+    mkvirtualenv -p /usr/bin/python3.4 qvarn-py3
+    pip install -r ../qvarn-testing/requirements.txt
     pip install -r requirements-py3.txt --find-links ../qvarn-testing/libs
-    pip install uwsgidecorators
     pip install -e .
     ./check
 
+
+Note that pylint will fail if you run the check script in a Python 2.7
+virtualenv on code from the Python 3 branch due to our compatibility shims.
 
 
 Running tests with py.test
 ==========================
 
-First install needed dependencies::
+First install dependencies::
 
     pip install coverage pytest pytest-cov
 
-Then create ``pytest.ini`` file::
+Then you can run the tests::
 
-    [pytest]
-    python_files=*_tests.py
-
-Then you can run tests:
-
-::
-
-    py.test 
-      -vvx
-      --tb=native
-      -c ../qvarn-testing/pytest.ini
-      --cov-config=../qvarn-testing/pytest.ini
-      --cov-report=term-missing
+    cd qvarn
+    py.test \
+      -vvx \
+      --tb=native \
+      -c ../qvarn-testing/pytest.ini \
+      --cov-config=../qvarn-testing/pytest.ini \
+      --cov-report=term-missing \
       qvarn
+
+Note: this doesn't work for me (py.test fails to recognize --cov-* options),
+and I've no clue why!
 
 
 Running integration tests
 =========================
 
-First download the tools (these should be already downloaded and added to the
-repository)::
+Install the tools::
 
-    cd libs
-    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/cmdtest/snapshot/cmdtest-0.27.tar.gz
-    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/ttystatus/snapshot/ttystatus-0.32.tar.gz
-    wget http://git.liw.fi/cgi-bin/cgit/cgit.cgi/cliapp/snapshot/cliapp-1.20160724.tar.gz
-
-Then install the tools::
-
-    cd ..
-    pip install markdown
-    pip install cmdtest --find-links libs
-    pip install ttystatus --find-links libs
+    cd qvarn-testing
+    mkvirtualenv -p /usr/bin/python2.7 qvarn-testing
+    pip install -r requirements-integration.txt
     pip install cliapp --find-links libs
+    pip install ttystatus --find-links libs
+    pip install cmdtest --find-links libs
+    pip install -e ../qvarn
+    pip install -e .
 
 
-Create database user and database::
+Create Postgresql database user and database::
 
-    > sudo -u postgres psql                                                      
-    postgres=# CREATE USER qvarn WITH PASSWORD 'secret';
-    postgres=# CREATE DATABASE qvarn;
-    postgres=# GRANT ALL PRIVILEGES ON DATABASE qvarn TO qvarn;
+    > sudo -u postgres createuser $USER
+    > sudo -u postgres createdb qvarn -O $USER
 
+Then initialize the Qvarn database::
 
-Then initialize Qvarn database (see ``qvarn.conf``)::
+    qvtestinitdb ../qvarn/resource_type
 
-    cd qvarn
-    qvtestinitdb resource_type
+This will create several configuration files under ``/tmp/qvtest``.
 
-Add these two sections to ``~/.config/qvarn/createtoken.conf``::
-
-    [http://127.0.0.1:9080]
-    client_id = 
-    client_secret = 
-
-    [https://127.0.0.1:9443]
-    client_id = 
-    client_secret = 
-
-Generate self-signed SSL certificate (this should be already generated)::
+Generate self-signed SSL certificate::
 
     openssl genrsa -out ssl.key 2048
     openssl req -new -key ssl.key -out ssl.csr
@@ -110,11 +92,14 @@ See: http://uwsgi-docs.readthedocs.io/en/latest/HTTPS.html
 
 Run Qvarn instance and Haproxy::
 
-    cd qvarn
-    qvtestserver ./resource_type
+    workon qvarn-py3
+    pip install -e .
+    qvtestserver ../qvarn/resource_type
 
 Finally you can run tests using this command::
 
+    export QVARN_CREATETOKEN_CONF=$PWD/createtoken.conf
+    cd qvarn
     qvtestapi /tmp/qvtest/etc/qvarn.conf --stop-on-first-fail
 
 If something fails, you can run tests like this::
@@ -136,7 +121,7 @@ Do not forget to turn off uwsgi, to unlock database resource for dropping.
 Debugging integration tests
 ---------------------------
 
-When running qvarn with ``qvtestserver`` all loggs will be writtne to stdout
+When running qvarn with ``qvtestserver`` all logs will be written to stdout
 and to ``/tmp/qvarn.log``. If you want to print something there, you need to
 print it this way::
 
@@ -149,7 +134,7 @@ keyword argument, that will be printed too if provided.
 How to read and write yarn test files
 =====================================
 
-Here are some usefull resources:
+Here are some useful resources:
 
 - http://blog.liw.fi/posts/yarn/
 

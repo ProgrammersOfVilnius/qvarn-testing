@@ -4,6 +4,6 @@ psycopg2==2.6.2
 uWSGI==2.0.14
 PyYAML==3.12
 dataset==0.8.0
-qvarn==0.81
 WebOb==1.7.2
 Jinja2==2.9.6
+coverage==4.1
