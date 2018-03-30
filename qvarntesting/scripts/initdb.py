@@ -16,8 +16,8 @@ from qvarntesting.constants import DEFAULT_BASE_DIR
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('specdir', help="directory containging resource type definitions")
-    parser.add_argument('-d', '--basedir', default=DEFAULT_BASE_DIR, help="path to config files and etc.")
+    parser.add_argument('specdir', help="directory containing resource type definitions")
+    parser.add_argument('-d', '--basedir', default=DEFAULT_BASE_DIR, help="path to config files etc.")
     args = parser.parse_args()
 
     set_up_logging()

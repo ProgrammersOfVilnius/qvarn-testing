@@ -81,12 +81,18 @@ class StdoutSlogWriter(SlogWriter):
     def close(self):
         pass
 
+    def reopen(self):
+        pass
+
 
 class FileSlogWriter(SlogWriter):
 
     def __init__(self, filename):
         self._log_filename = filename
-        self._log_file = codecs.open(filename, 'w', encoding='utf-8')
+        self._open()
+
+    def _open(self):
+        self._log_file = codecs.open(self._log_filename, 'w', encoding='utf-8')
 
     def write(self, log_obj):
         line = format_log_line(log_obj)
@@ -97,3 +103,7 @@ class FileSlogWriter(SlogWriter):
     def close(self):
         self._log_file.close()
         self._log_file = None
+
+    def reopen(self):
+        self._log_file.close()
+        self._open()
