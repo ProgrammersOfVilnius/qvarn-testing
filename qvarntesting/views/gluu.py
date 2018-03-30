@@ -21,7 +21,11 @@ def auth_token(request, start_response):
 
     method, value = request.authorization
     if method == 'Basic':
-        clientid, secret = base64.b64decode(value).split(':', 1)
+        clientid, secret = base64.b64decode(value).split(b':', 1)
+        if not isinstance(clientid, str):
+            clientid = clientid.decode('UTF-8')
+        if not isinstance(secret, str):
+            secret = secret.decode('UTF-8')
     else:
         raise Exception("%s authentication method is not supported." % method)
 
