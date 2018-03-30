@@ -113,9 +113,11 @@ After running tests one time, in order to run tests again, first you need to
 clean database, because tests leaves test data in database and will fail if you
 try to run them again. To clean database, run this command::
 
-    dropdb qvarn && createdb qvarn && qvtestinitdb resource_type
+    sudo -u postgres psql qvarn -f drop_everything.sql
+    qvtestinitdb ../qvarn/resource_type
 
-Do not forget to turn off uwsgi, to unlock database resource for dropping.
+Do not forget to turn off uwsgi first (with a Ctrl+C), to unlock database
+resource for dropping.
 
 
 Debugging integration tests
