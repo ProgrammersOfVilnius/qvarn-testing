@@ -48,13 +48,13 @@ def format_log_line(msg):
         exclude.update(['status'])
 
     elif msg['msg_type'] == 'exception':
-        # Usually 'exception' message just repeates excaption, that happened in
+        # Usually 'exception' message just repeats the exception that happened in
         # a previous message.
         #
-        # TODO: Probably it would be a good idea to check if already seen this
+        # TODO: Probably it would be a good idea to check if we've already seen this
         #       exception and only return if we really showed this exception
         #       previously.
-        return
+        return ''
 
     else:
         msg.setdefault('msg_text', '')
@@ -75,7 +75,10 @@ def format_log_line(msg):
 class StdoutSlogWriter(SlogWriter):
 
     def write(self, log_obj):
-        print(format_log_line(log_obj))
+        line = format_log_line(log_obj)
+        if not isinstance(line, str):
+            line = line.encode('UTF-8')
+        print(line)
         sys.stdout.flush()
 
     def close(self):
