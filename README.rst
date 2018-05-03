@@ -120,6 +120,28 @@ Do not forget to turn off uwsgi first (with a Ctrl+C), to unlock database
 resource for dropping.
 
 
+How to use real Gluu server?
+----------------------------
+
+In order to use real Gluu server you need to modify
+``/tmp/qvtest/etc/haproxy.cfg``::
+
+  frontend http-in
+      bind *:9080
+      bind *:9443 ssl crt ssl.pem
+      default_backend qvarn
+
+      acl resource_auth path_beg /auth
+      use_backend gluu if resource_auth
+
+  backend gluu
+      server gluu bolagsfakta-gluu-dev.pov.lt:443 ssl verify none
+      option forwardfor
+      acl gluu_rewrite path_beg /auth
+      reqrep ^(.*)\ /auth/(.*)$ \1\ /oxauth/seam/resource/restv1/oxauth/\2 if gluu_rewrite
+      reqadd X-Forwarded-Proto:\ https
+
+
 Debugging integration tests
 ---------------------------
 
